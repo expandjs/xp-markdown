@@ -1,0 +1,226 @@
+<!--
+@license
+Copyright (c) 2015 The expand.js authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+This component is used to parse and display a markdown formatted text. Passing
+a markdown string to the `text` attribute will cause the component to render
+the passed text and change the component's inner HTML with the result from the
+parsed string.
+
+Example:
+    <xp-markdown text="# This is some markdown text">
+        #shadow-dom
+            <h1>This is some markdown text</h1>
+    </xp-markdown>
+
+@component xp-markdown
+@description This component is used to parse and display a markdown formatted text
+
+@dependency markdown-it Markdown-it/markdown-it#~4.0
+@dependency polymer Polymer/polymer#^0.5
+@dependency expandjs ExpandJS/expandjs
+-->
+
+<script src="../markdown-it/dist/markdown-it.js"></script>
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+
+<polymer-element name="xp-markdown" constructor="XPMarkdownElement" attributes="breaks html langPrefix linkify quotes source text typography xhtmOut">
+
+    <template>
+        <style>
+            :host {
+                display: block;
+                overflow: visible;
+            }
+        </style>
+        <div id="xpMarkdownWrapper"></div>
+    </template>
+
+    <script>
+        XPComponent({
+
+            /**
+             * Creates the adaptee.
+             *
+             * @method adapt
+             * @returns {Element}
+             * @private
+             */
+            adapt: function () {
+                var self = this;
+                self.adaptee = markdownit({
+                    breaks: self.breaks,
+                    html: self.html,
+                    langPrefix: self.langPrefix,
+                    linkify: self.linkify,
+                    quotes: self.quotes,
+                    typographer: self.typographer,
+                    xhtmlOut: self.xhtmlOut
+                });
+                return self;
+            },
+
+            /**
+             * Renders the markdown's text.
+             *
+             * @method render
+             * @returns {Element}
+             * @private
+             */
+            render: function () {
+                var self = this;
+                self.source = self.adaptee.render(XP.isString(self.text, true) ? self.text : self.innerHTML);
+                return self;
+            },
+
+            /**
+             * Refreshes the element.
+             *
+             * @method refresh
+             * @returns {Element}
+             * @private
+             */
+            refresh: function() {
+                var self = this;
+                self.adapt();
+                self.render();
+                return self;
+
+            },
+
+            /*********************************************************************/
+
+            // OBSERVE
+            observe: {
+                'breaks html langPrefix linkify quotes text typographer xhtmlOut': 'refresh'
+            },
+
+            // PUBLISH
+            publish: {
+
+                /**
+                 * If set to true, converts `\n` into `<br>`.
+                 *
+                 * @attribute breaks
+                 * @type boolean
+                 * @default false
+                 */
+                breaks: {reflect: true, value: false},
+
+                /**
+                 * If set to true, enables html tags in source.
+                 *
+                 * @attribute html
+                 * @type boolean
+                 * @default false
+                 */
+                html: {reflect: true, value: false},
+
+                /**
+                 * The css language prefix for fenced blocks, useful for external highlighters.
+                 *
+                 * @attribute langPrefix
+                 * @type string
+                 * @default "language-"
+                 */
+                langPrefix: {reflect: true, value: 'language-'},
+
+                /**
+                 * If set to true, converts URL-like text into links.
+                 *
+                 * @attribute linkify
+                 * @type boolean
+                 * @default false
+                 */
+                linkify: {reflect: true, value: false},
+
+                /**
+                 * Double plus single quotes replacement pairs, when typographer is enabled.
+                 *
+                 * @attribute quotes
+                 * @type string
+                 * @default "\u201c\u201d\u2018\u2019"
+                 */
+                quotes: {reflect: true, value: '\u201c\u201d\u2018\u2019'},
+
+                /**
+                 * The html rendered from markdown's text.
+                 *
+                 * @attribute source
+                 * @type string
+                 * @default ""
+                 * @readonly
+                 */
+                source: {reflect: false, value: ''},
+
+                /**
+                 * The markdown's text to render.
+                 *
+                 * @attribute parsed
+                 * @type string
+                 * @default ""
+                 */
+                text: {reflect: false, value: ''},
+
+                /**
+                 * If set to true, enables some language-neutral replacement plus quotes beautification.
+                 *
+                 * @attribute typographer
+                 * @type boolean
+                 * @default false
+                 */
+                typographer: {reflect: true, value: false},
+
+                /**
+                 * If set to true, uses `/` to close single tags like `<br>`.
+                 *
+                 * @attribute xhtmlOut
+                 * @type boolean
+                 * @default false
+                 */
+                xhtmlOut: {reflect: true, value: false}
+            },
+
+            /**
+             * The adapted object.
+             *
+             * @property adaptee
+             * @type Object
+             * @private
+             */
+            adaptee: null,
+
+            /*********************************************************************/
+
+            // OBSERVER
+            sourceChanged: function (pre, post) {
+                this.$.xpMarkdownWrapper.innerHTML = post;
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            attached: function () {
+                this.mutated();
+            },
+
+            // LISTENER
+            mutated: function () {
+                XP.onMutation(this.render(), this.mutated.bind(this), {characterData: true, childList: true, subtree: true});
+            },
+
+            // LISTENER
+            ready: function() {
+                this.refresh();
+            }
+        });
+    </script>
+
+</polymer-element>
+

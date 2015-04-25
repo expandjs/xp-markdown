@@ -1,0 +1,22 @@
+{
+  "name": "xp-markdown",
+  "license": "BSD-3-Clause",
+  "version": "0.8.0",
+  "description": "This component is used to parse and display a markdown formatted text",
+  "authors": [
+    "Giuliano Rullo <g.rullo@expandjs.com>",
+    "Maurizio Stefàno <m.stefano@expandjs.com>",
+    "Robert Manolea <r.manolea@expandjs.com>"
+  ],
+  "main": [
+    "xp-markdown.html"
+  ],
+  "keywords": [
+    "web-components"
+  ],
+  "dependencies": {
+    "expandjs": "ExpandJS/expandjs",
+    "markdown-it": "Markdown-it/markdown-it#~4.0",
+    "polymer": "Polymer/polymer#^0.5"
+  }
+}
