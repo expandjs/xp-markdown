@@ -2,7 +2,8 @@
   "name": "xp-markdown",
   "license": "BSD-3-Clause",
   "version": "0.8.0",
-  "description": "This element is used to parse and display a markdown formatted text",
+  "description": "This element is used to parse and display a markdown formatted text.",
+  "homepage": "http://www.expandjs.com/elements/xp-markdown",
   "authors": [
     "Giuliano Rullo <g.rullo@expandjs.com>",
     "Maurizio Stefàno <m.stefano@expandjs.com>",
