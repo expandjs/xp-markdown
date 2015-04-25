@@ -7,19 +7,10 @@ The complete set of contributors may be found at https://expandjs.github.io/CONT
 -->
 
 <!--
-This component is used to parse and display a markdown formatted text. Passing
-a markdown string to the `text` attribute will cause the component to render
-the passed text and change the component's inner HTML with the result from the
-parsed string.
+This element is used to parse and display a markdown formatted text.
 
-Example:
-    <xp-markdown text="# This is some markdown text">
-        #shadow-dom
-            <h1>This is some markdown text</h1>
-    </xp-markdown>
-
-@component xp-markdown
-@description This component is used to parse and display a markdown formatted text
+@element xp-markdown
+@description This element is used to parse and display a markdown formatted text
 
 @dependency markdown-it Markdown-it/markdown-it#~4.0
 @dependency polymer Polymer/polymer#^0.5
@@ -43,7 +34,7 @@ Example:
     </template>
 
     <script>
-        XPComponent({
+        XPElement({
 
             /**
              * Creates the adaptee.
