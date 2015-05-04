@@ -25,7 +25,7 @@
   ],
   "dependencies": {
     "expandjs": "ExpandJS/expandjs",
-    "highlight.js": "Isagalaev/highlight.js#~8.5",
+    "highlightjs": "Components/highlightjs#~8.5",
     "markdown-it": "Markdown-it/markdown-it#~4.0",
     "polymer": "Polymer/polymer#^0.5"
   }
