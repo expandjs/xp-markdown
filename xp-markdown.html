@@ -13,11 +13,13 @@ This element is used to parse and display a markdown formatted text.
 @description A custom element able to parse and display a markdown formatted text
 @homepage http://www.expandjs.com/elements/xp-markdown
 
+@dependency highlightjs Components/highlightjs#~8.5
 @dependency markdown-it Markdown-it/markdown-it#~4.0
 @dependency polymer Polymer/polymer#^0.5
 @dependency expandjs ExpandJS/expandjs
 -->
 
+<script src="../highlightjs/highlight.pack.js"></script>
 <script src="../markdown-it/dist/markdown-it.js"></script>
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
@@ -25,10 +27,22 @@ This element is used to parse and display a markdown formatted text.
 <polymer-element name="xp-markdown" constructor="XPMarkdownElement" attributes="breaks html langPrefix linkify quotes source text typography xhtmOut">
 
     <template>
+        <link rel="stylesheet" href="../highlightjs/styles/androidstudio.css">
         <style>
             :host {
                 display: block;
                 overflow: visible;
+            }
+
+            :host code {
+
+                /* BODY */
+                font-size: 14px;
+                font-weight: 400;
+                letter-spacing: 0.01em;
+                line-height: 20px;
+                text-overflow: clip;
+                white-space: normal;
             }
         </style>
         <div id="xpMarkdownWrapper"></div>
@@ -48,6 +62,7 @@ This element is used to parse and display a markdown formatted text.
                 var self = this;
                 self.adaptee = markdownit({
                     breaks: self.breaks,
+                    highlight: self.highlight,
                     html: self.html,
                     langPrefix: self.langPrefix,
                     linkify: self.linkify,
@@ -56,6 +71,22 @@ This element is used to parse and display a markdown formatted text.
                     xhtmlOut: self.xhtmlOut
                 });
                 return self;
+            },
+
+            /**
+             * Highlights the markdown's text.
+             *
+             * @method highlight
+             * @param {string} text
+             * @param {string} [lang]
+             * @returns {string}
+             * @private
+             */
+            highlight: function (text, lang) {
+                console.log(text, lang);
+                if (lang && hljs.getLanguage(lang)) { try { return hljs.highlight(lang, text).value; } catch (exc) { } }
+                try { return hljs.highlightAuto(text).value; } catch (exc) { }
+                return '';
             },
 
             /**
@@ -119,9 +150,9 @@ This element is used to parse and display a markdown formatted text.
                  *
                  * @attribute langPrefix
                  * @type string
-                 * @default "language-"
+                 * @default "hljs "
                  */
-                langPrefix: {reflect: true, value: 'language-'},
+                langPrefix: {reflect: true, value: 'hljs '},
 
                 /**
                  * If set to true, converts URL-like text into links.
