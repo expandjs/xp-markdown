@@ -24,8 +24,8 @@
     "package.json"
   ],
   "dependencies": {
-    "expandjs": "ExpandJS/expandjs",
     "highlightjs": "Components/highlightjs#~8.5",
+    "expandjs": "ExpandJS/expandjs",
     "markdown-it": "Markdown-it/markdown-it#~4.0",
     "polymer": "Polymer/polymer#^0.5"
   }
