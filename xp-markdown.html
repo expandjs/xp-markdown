@@ -88,8 +88,8 @@ This element is used to parse and display a markdown formatted text.
              * @private
              */
             highlight: function (text, lang) {
-                if (lang && hljs.getLanguage(lang)) { try { return hljs.highlight(lang, text).value; } catch (exc) { } }
-                try { return hljs.highlightAuto(text).value; } catch (exc) { }
+                if (lang && hljs.getLanguage(lang)) { try { return hljs.highlight(lang, text).value; } catch (ignore) { } }
+                try { return hljs.highlightAuto(text).value; } catch (ignore) { }
                 return '';
             },
 
