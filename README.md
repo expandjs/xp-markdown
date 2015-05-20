@@ -1,3 +1,3 @@
 # xp-markdown
 
-See the [`documentation page`](http://www.expandjs.com/elements/xp-markdown) for more information.
+See the [`documentation page`](http://expandjs.com/elements/xp-markdown) for more information.
