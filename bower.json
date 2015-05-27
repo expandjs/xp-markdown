@@ -1,7 +1,7 @@
 {
   "name": "xp-markdown",
   "license": "BSD-3-Clause",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "description": "A custom element able to parse and display a markdown formatted text",
   "homepage": "http://expandjs.com/elements/xp-markdown",
   "authors": [
