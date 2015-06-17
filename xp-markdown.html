@@ -1,0 +1,313 @@
+<!--
+@license
+Copyright (c) 2015 The ExpandJS authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+This element is used to parse and display a markdown formatted text.
+
+@element xp-markdown
+@description A custom element able to parse and display a markdown formatted text
+@keywords web app, html5, expandjs, web-components
+@group contents
+@homepage http://expandjs.com/elements/xp-markdown
+
+@dependency highlightjs Components/highlightjs#~8.5
+@dependency markdown-it Markdown-it/markdown-it#~4.0
+@dependency polymer Polymer/polymer
+@dependency expandjs ExpandJS/expandjs
+-->
+
+<script src="../highlightjs/highlight.pack.js"></script>
+<script src="../markdown-it/dist/markdown-it.js"></script>
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+
+<dom-module id="xp-markdown">
+
+    <link rel="import" type="css" href="../highlightjs/styles/androidstudio.css">
+
+    <style>
+        :host {
+            display: block;
+            overflow: visible;
+        }
+
+        :host code {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            line-height: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        :host #xpMarkdownWrapper {
+            overflow: hidden;
+        }
+    </style>
+
+    <template>
+        <div id="xpMarkdownWrapper"></div>
+    </template>
+
+    <script>
+        Polymer({
+
+            // ELEMENT
+            is: 'xp-markdown',
+
+            /*********************************************************************/
+
+            /**
+             * Creates the adaptee.
+             *
+             * @method _adapt
+             * @returns {Element}
+             * @private
+             */
+            _adapt: function () {
+
+                // Vars
+                var self = this;
+
+                // Adapting
+                self._setAdaptee(markdownit({
+                    breaks: self.breaks,
+                    highlight: self._highlight,
+                    html: self.html,
+                    langPrefix: self.langPrefix,
+                    linkify: self.linkify,
+                    quotes: self.quotes,
+                    typographer: self.typographer,
+                    xhtmlOut: self.xhtmlOut
+                }));
+
+                // Anchors plugin
+                self.adaptee.core.ruler.push('heading_anchors', function (state) {
+                    for (var i = 0; i < state.tokens.length - 1; i += 1) {
+                        if (state.tokens[i].type === 'heading_open' && state.tokens[i+1].type === 'inline' && state.tokens[i+1].content) {
+                            var anchorName = state.tokens[i+1].content.replace(/ /g, '');
+                            state.tokens[i].attrPush(['id', anchorName]);
+                            var anchorToken = new state.Token('html_inline', '', 0);
+                            anchorToken.content = '<a href="#" name="' + anchorName + '"></a>';
+                            state.tokens[i+1].children.unshift(anchorToken);
+                            i += 2;
+                        }
+                    }
+                });
+
+                return self;
+            },
+
+            /**
+             * Highlights the markdown's text.
+             *
+             * @method _highlight
+             * @param {string} text
+             * @param {string} [lang]
+             * @returns {string}
+             * @private
+             */
+            _highlight: function (text, lang) {
+                if (lang && hljs.getLanguage(lang)) { try { return hljs.highlight(lang, text).value; } catch (ignore) { } }
+                try { return hljs.highlightAuto(text).value; } catch (ignore) { }
+                return '';
+            },
+
+            /**
+             * Renders the markdown's text.
+             *
+             * @method _render
+             * @returns {Element}
+             * @private
+             */
+            _render: function () {
+                var self = this;
+                self._setSource(self.adaptee.render(self.text || Polymer.dom(self).innerHTML));
+                return self;
+            },
+
+            /**
+             * Refreshes the element.
+             *
+             * @method _refresh
+             * @returns {Element}
+             * @private
+             */
+            _refresh: function() {
+                var self = this;
+                self._adapt();
+                self._render();
+                return self;
+            },
+
+            /*********************************************************************/
+
+            // OBSERVERS
+            observers: [
+                '_refresh(breaks, html, langPrefix, linkify, quotes, text, typographer, xhtmlOut)'
+            ],
+
+            // PROPERTIES
+            properties: {
+
+                /**
+                 * The adapted object.
+                 *
+                 * @attribute adaptee
+                 * @type Object
+                 * @notifies
+                 * @readonly
+                 */
+                adaptee: {
+                    notify: true,
+                    readOnly: true,
+                    type: Object,
+                    value: null
+                },
+
+                /**
+                 * If set to true, converts `\n` into `<br>`.
+                 *
+                 * @attribute breaks
+                 * @type boolean
+                 * @default false
+                 */
+                breaks: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, enables html tags in source.
+                 *
+                 * @attribute html
+                 * @type boolean
+                 * @default false
+                 */
+                html: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * The css language prefix for fenced blocks, useful for external highlighters.
+                 *
+                 * @attribute lang-prefix
+                 * @type string
+                 * @default "hljs "
+                 */
+                langPrefix: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: 'hljs '
+                },
+
+                /**
+                 * If set to true, converts URL-like text into links.
+                 *
+                 * @attribute linkify
+                 * @type boolean
+                 * @default false
+                 */
+                linkify: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * Double plus single quotes replacement pairs, when typographer is enabled.
+                 *
+                 * @attribute quotes
+                 * @type string
+                 * @default "\u201c\u201d\u2018\u2019"
+                 */
+                quotes: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: '\u201c\u201d\u2018\u2019'
+                },
+
+                /**
+                 * The html rendered from markdown's text.
+                 *
+                 * @attribute source
+                 * @type string
+                 * @notifies
+                 * @readonly
+                 */
+                source: {
+                    notify: true,
+                    observer: '_sourceChanged',
+                    readOnly: true,
+                    type: String,
+                    value: null
+                },
+
+                /**
+                 * The markdown's text to render.
+                 *
+                 * @attribute parsed
+                 * @type string
+                 */
+                text: {
+                    type: String,
+                    value: null
+                },
+
+                /**
+                 * If set to true, enables some language-neutral replacement plus quotes beautification.
+                 *
+                 * @attribute typographer
+                 * @type boolean
+                 * @default false
+                 */
+                typographer: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, uses `/` to close single tags like `<br>`.
+                 *
+                 * @attribute xhtml-out
+                 * @type boolean
+                 * @default false
+                 */
+                xhtmlOut: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            /*********************************************************************/
+
+            // OBSERVER
+            _sourceChanged: function (post) {
+                this.$.xpMarkdownWrapper.innerHTML = post;
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            attached: function () {
+                this.mutated();
+            },
+
+            // LISTENER
+            mutated: function () {
+                XP.onMutation(this._render(), this.mutated.bind(this), {characterData: true, childList: true, subtree: true});
+            }
+        });
+    </script>
+
+</dom-module>
