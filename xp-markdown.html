@@ -15,20 +15,19 @@ This element is used to parse and display a markdown formatted text.
 @group contents
 @homepage http://expandjs.com/elements/xp-markdown
 
-@dependency highlightjs Components/highlightjs#~8.5
-@dependency markdown-it Markdown-it/markdown-it#~4.0
+@dependency prism PrismJS/prism
+@dependency markdown-it Markdown-it/markdown-it
 @dependency polymer Polymer/polymer
 @dependency expandjs ExpandJS/expandjs
 -->
 
-<script src="../highlightjs/highlight.pack.js"></script>
+<script src="../prism/prism.js"></script>
 <script src="../markdown-it/dist/markdown-it.min.js"></script>
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
+<link rel="stylesheet" href="../prism/themes/prism.css">
 
 <dom-module id="xp-markdown">
-
-    <link rel="import" type="css" href="../highlightjs/styles/androidstudio.css">
 
     <style>
         :host {
@@ -79,7 +78,7 @@ This element is used to parse and display a markdown formatted text.
                     breaks: self.breaks,
                     highlight: self._highlight,
                     html: self.html,
-                    langPrefix: self.langPrefix,
+                    langPrefix: 'hljs',
                     linkify: self.linkify,
                     quotes: self.quotes,
                     typographer: self.typographer,
@@ -104,22 +103,37 @@ This element is used to parse and display a markdown formatted text.
             },
 
             /**
-             * Highlights the markdown's text.
+             * Returns the corresponding language definition.
+             *
+             * @method _detectLang
+             * @param {string} code
+             * @param {string} [lang]
+             * @returns {Object}
+             * @private
+             */
+            _detectLang: function (code, lang) {
+                if (!lang) { return code.match(/^\s*</) ? Prism.languages.markup : Prism.languages.javascript; }
+                if (lang === 'js' || lang.substr(0, 2) === 'es') { return Prism.languages.javascript; }
+                if (lang === 'css') { return Prism.languages.css; }
+                if (lang === 'c') { return Prism.langauges.clike; }
+                return Prism.languages.markup;
+            },
+
+            /**
+             * Highlights the markdown's code.
              *
              * @method _highlight
-             * @param {string} text
+             * @param {string} code
              * @param {string} [lang]
              * @returns {string}
              * @private
              */
-            _highlight: function (text, lang) {
-                if (lang && hljs.getLanguage(lang)) { try { return hljs.highlight(lang, text).value; } catch (ignore) { } }
-                try { return hljs.highlightAuto(text).value; } catch (ignore) { }
-                return '';
+            _highlight: function (code, lang) {
+                return Prism.highlight(code, this._detectLang(code, lang));
             },
 
             /**
-             * Renders the markdown's text.
+             * Renders the markdown's code.
              *
              * @method _render
              * @returns {Element}
@@ -127,7 +141,7 @@ This element is used to parse and display a markdown formatted text.
              */
             _render: function () {
                 var self = this;
-                self._setSource(self.adaptee.render(self.text || Polymer.dom(self).innerHTML));
+                self._setSource(self.adaptee.render(self.code || Polymer.dom(self).innerHTML));
                 return self;
             },
 
@@ -149,7 +163,7 @@ This element is used to parse and display a markdown formatted text.
 
             // OBSERVERS
             observers: [
-                '_refresh(breaks, html, langPrefix, linkify, quotes, text, typographer, xhtmlOut)'
+                '_refresh(breaks, code, html, linkify, quotes, typographer, xhtmlOut)'
             ],
 
             // PROPERTIES
@@ -184,6 +198,17 @@ This element is used to parse and display a markdown formatted text.
                 },
 
                 /**
+                 * The markdown's code to render.
+                 *
+                 * @attribute parsed
+                 * @type string
+                 */
+                code: {
+                    type: String,
+                    value: null
+                },
+
+                /**
                  * If set to true, enables html tags in source.
                  *
                  * @attribute html
@@ -194,19 +219,6 @@ This element is used to parse and display a markdown formatted text.
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
-                },
-
-                /**
-                 * The css language prefix for fenced blocks, useful for external highlighters.
-                 *
-                 * @attribute lang-prefix
-                 * @type string
-                 * @default "hljs "
-                 */
-                langPrefix: {
-                    reflectToAttribute: true,
-                    type: String,
-                    value: 'hljs '
                 },
 
                 /**
@@ -236,7 +248,7 @@ This element is used to parse and display a markdown formatted text.
                 },
 
                 /**
-                 * The html rendered from markdown's text.
+                 * The html rendered from markdown's code.
                  *
                  * @attribute source
                  * @type string
@@ -247,17 +259,6 @@ This element is used to parse and display a markdown formatted text.
                     notify: true,
                     observer: '_sourceChanged',
                     readOnly: true,
-                    type: String,
-                    value: null
-                },
-
-                /**
-                 * The markdown's text to render.
-                 *
-                 * @attribute parsed
-                 * @type string
-                 */
-                text: {
                     type: String,
                     value: null
                 },
