@@ -22,9 +22,9 @@
     "**/.*"
   ],
   "dependencies": {
-    "highlightjs": "Components/highlightjs#~8.5",
     "expandjs": "ExpandJS/expandjs",
-    "markdown-it": "Markdown-it/markdown-it#~4.0",
-    "polymer": "Polymer/polymer"
+    "markdown-it": "Markdown-it/markdown-it",
+    "polymer": "Polymer/polymer",
+    "prism": "PrismJS/prism"
   }
 }
