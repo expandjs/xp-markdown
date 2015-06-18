@@ -115,7 +115,7 @@ This element is used to parse and display a markdown formatted text.
                 if (!lang) { return code.match(/^\s*</) ? Prism.languages.markup : Prism.languages.javascript; }
                 if (lang === 'js' || lang.substr(0, 2) === 'es') { return Prism.languages.javascript; }
                 if (lang === 'css') { return Prism.languages.css; }
-                if (lang === 'c') { return Prism.langauges.clike; }
+                if (lang === 'c') { return Prism.languages.clike; }
                 return Prism.languages.markup;
             },
 
