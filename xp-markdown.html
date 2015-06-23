@@ -15,10 +15,10 @@ This element is used to parse and display a markdown formatted text.
 @group contents
 @homepage http://expandjs.com/elements/xp-markdown
 
-@dependency prism PrismJS/prism
-@dependency markdown-it Markdown-it/markdown-it
-@dependency polymer Polymer/polymer
-@dependency expandjs ExpandJS/expandjs
+@dependency prism PrismJS/prism^1.0.0
+@dependency markdown-it Markdown-it/markdown-it^4.2.2
+@dependency polymer Polymer/polymer#^1.0.4
+@dependency expandjs ExpandJS/expandjs#0.9.1
 -->
 
 <script src="../prism/prism.js"></script>
@@ -32,20 +32,23 @@ This element is used to parse and display a markdown formatted text.
     <style>
         :host {
             display: block;
-            overflow: visible;
-        }
-
-        :host code {
-            font-size: 14px;
-            font-weight: 400;
-            letter-spacing: 0.01em;
-            line-height: 20px;
-            overflow: hidden;
-            position: relative;
+            overflow: auto;
         }
 
         :host #xpMarkdownWrapper {
             overflow: hidden;
+        }
+
+        :host #xpMarkdownWrapper ::content pre {
+            background: hsla(24, 20%, 95%, 1);
+            box-sizing: border-box;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            line-height: 20px;
+            overflow: auto;
+            padding: 16px 16px 16px 0;
+            position: relative;
         }
     </style>
 
@@ -76,9 +79,8 @@ This element is used to parse and display a markdown formatted text.
                 // Adapting
                 self._setAdaptee(markdownit({
                     breaks: self.breaks,
-                    highlight: self._highlight,
+                    highlight: self._highlight.bind(self),
                     html: self.html,
-                    langPrefix: 'hljs',
                     linkify: self.linkify,
                     quotes: self.quotes,
                     typographer: self.typographer,
@@ -306,7 +308,7 @@ This element is used to parse and display a markdown formatted text.
 
             // LISTENER
             mutated: function () {
-                XP.onMutation(this._render(), this.mutated.bind(this), {characterData: true, childList: true, subtree: true});
+                XP.onMutation(this._refresh(), this.mutated.bind(this), {characterData: true, childList: true, subtree: true});
             }
         });
     </script>
