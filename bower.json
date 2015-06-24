@@ -23,8 +23,8 @@
   ],
   "dependencies": {
     "expandjs": "ExpandJS/expandjs#0.9.1",
-    "markdown-it": "Markdown-it/markdown-it^4.0.0",
+    "markdown-it": "Markdown-it/markdown-it#^4.0.0",
     "polymer": "Polymer/polymer#^1.0.0",
-    "prism": "PrismJS/prism^1.0.0"
+    "prism": "PrismJS/prism#^1.0.0"
   }
 }
