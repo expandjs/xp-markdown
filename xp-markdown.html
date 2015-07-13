@@ -15,16 +15,20 @@ This element is used to parse and display a markdown formatted text.
 @group contents
 @homepage http://expandjs.com/elements/xp-markdown
 
+@behavior xp-adapter-behavior http://expandjs.com/elements/xp-adapter-behavior
+
 @dependency prism PrismJS/prism#^1.0.0
 @dependency markdown-it Markdown-it/markdown-it#^4.0.0
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.3
+@dependency expandjs ExpandJS/expandjs#0.9.4
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.4
 -->
 
 <script src="../prism/prism.js"></script>
 <script src="../markdown-it/dist/markdown-it.min.js"></script>
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
+<link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
 <link rel="stylesheet" href="../prism/themes/prism.css">
 
 <dom-module id="xp-markdown">
@@ -58,13 +62,18 @@ This element is used to parse and display a markdown formatted text.
             // ELEMENT
             is: 'xp-markdown',
 
+            // BEHAVIORS
+            behaviors: [
+                Polymer.XPAdapterBehavior
+            ],
+
             /*********************************************************************/
 
             /**
-             * Creates the adaptee.
+             * Used to set the adaptee.
              *
              * @method _adapt
-             * @returns {Element}
+             * @returns {Object}
              * @private
              */
             _adapt: function () {
@@ -97,7 +106,7 @@ This element is used to parse and display a markdown formatted text.
                     }
                 });
 
-                return self;
+                return self.adaptee;
             },
 
             /**
@@ -166,21 +175,6 @@ This element is used to parse and display a markdown formatted text.
 
             // PROPERTIES
             properties: {
-
-                /**
-                 * The adapted object.
-                 *
-                 * @attribute adaptee
-                 * @type Object
-                 * @notifies
-                 * @readonly
-                 */
-                adaptee: {
-                    notify: true,
-                    readOnly: true,
-                    type: Object,
-                    value: null
-                },
 
                 /**
                  * If set to true, converts `\n` into `<br>`.
