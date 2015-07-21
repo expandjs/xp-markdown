@@ -39,6 +39,11 @@ This element is used to parse and display a markdown formatted text.
             overflow: visible;
         }
 
+        :host #xpMarkdownWrapper ::content p > code {
+            background: hsla(24, 20%, 95%, 1);
+            padding: 0 4px;
+        }
+
         :host #xpMarkdownWrapper ::content pre {
             background: hsla(24, 20%, 95%, 1);
             box-sizing: border-box;
