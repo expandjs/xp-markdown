@@ -15,13 +15,13 @@ This element is used to parse and display a markdown formatted text.
 @group contents
 @homepage http://expandjs.com/elements/xp-markdown
 
-@behavior xp-adapter-behavior http://expandjs.com/elements/xp-adapter-behavior
+@behavior xp-adapter-behavior /bower_components/xp-adapter-behavior/xp-adapter-behavior.html
 
 @dependency prism PrismJS/prism#^1.0.0
 @dependency markdown-it Markdown-it/markdown-it#^4.0.0
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.4
-@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.4
+@dependency expandjs ExpandJS/expandjs#0.9.5
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.5
 -->
 
 <script src="../prism/prism.js"></script>
@@ -37,6 +37,10 @@ This element is used to parse and display a markdown formatted text.
         :host {
             display: block;
             overflow: visible;
+        }
+
+        :host([empty-source]) {
+            display: none !important;
         }
 
         :host #xpMarkdownWrapper ::content p > code {
@@ -206,6 +210,21 @@ This element is used to parse and display a markdown formatted text.
                 },
 
                 /**
+                 * If set to true, the element is hidden.
+                 *
+                 * @attribute empty-source
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                emptySource: {
+                    computed: '_computeEmptySource(source)',
+                    notify: true,
+                    reflectToAttribute: true,
+                    type: Boolean
+                },
+
+                /**
                  * If set to true, enables html tags in source.
                  *
                  * @attribute html
@@ -285,6 +304,13 @@ This element is used to parse and display a markdown formatted text.
                     type: Boolean,
                     value: false
                 }
+            },
+
+            /*********************************************************************/
+
+            // COMPUTER
+            _computeEmptySource: function (source) {
+                return !source;
             },
 
             /*********************************************************************/
